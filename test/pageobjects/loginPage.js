@@ -7,17 +7,18 @@ class LoginPage {
     return $('#password')
   }
 
-  get loginBtn() {
-    return $('#login-button')
+  get errorMessage() {
+    return $('div.error-message-container.error > h3')
   }
 
-  async clickLoginBtn() {
-    await this.loginBtn.click()
+  get loginBtn() {
+    return $('#login-button')
   }
 
   async login(username, password) {
     await this.usernameInput.setValue(username)
     await this.passwordInput.setValue(password)
+    await this.loginBtn.click()
   }
 }
 
