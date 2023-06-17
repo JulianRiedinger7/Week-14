@@ -1,11 +1,13 @@
 import LoginPage from '../pageobjects/loginPage'
 import ProductsPage from '../pageobjects/productsPage'
 import DetailsPage from '../pageobjects/detailsPage'
+import CartPage from '../pageobjects/cartPage'
+import CheckoutPage from '../pageobjects/checkoutPage'
 
 const validPassword = 'secret_sauce'
 const canLoginUsernames = ['standard_user', 'problem_user', 'performance_glitch_user']
 
-describe('Login functionality', () => {
+describe('Login errors functionality', () => {
   beforeAll('Open Browser URL', () => {
     browser.setWindowSize(1920, 1080)
     browser.url('https://www.saucedemo.com/')
@@ -36,9 +38,14 @@ describe('Login functionality', () => {
     await expect(LoginPage.errorMessage).toBeDisplayed()
     await expect(LoginPage.errorMessage).toHaveTextContaining('Epic sadface: Sorry, this user has been locked out.')
   })
+})
 
+describe('Specific usernames test', () => {
   canLoginUsernames.forEach((username) => {
-    it(`should login with username ${username} within specified duration`, async () => {
+    it(`${username} should login within specified duration`, async () => {
+      await expect(LoginPage.usernameInput).toBeDisplayed()
+      await expect(LoginPage.passwordInput).toBeDisplayed()
+
       const startTime = new Date().getTime()
       await LoginPage.login(username, validPassword)
       const endTime = new Date().getTime()
@@ -52,15 +59,50 @@ describe('Login functionality', () => {
     })
 
     it(`${username} should add one item and see the cart badge`, async () => {
+      const productTitleText = await ProductsPage.firstProductTitle.getText()
       await ProductsPage.firstProductTitle.click()
 
       await expect(DetailsPage.productTitle).toBeDisplayed()
-      await expect(DetailsPage.productTitle.getText()).toEqual(ProductsPage.firstProductTitle.getText())
+      const detailsProductTitleText = await DetailsPage.productTitle.getText()
+      await expect(detailsProductTitleText).toEqual(productTitleText)
       await DetailsPage.addToCartBtn.click()
       await expect(DetailsPage.cartBadge).toHaveTextContaining('1')
+    })
+
+    it(`${username} should see item in cart and proceed to checkout`, async () => {
+      const detailsProductTitleText = await DetailsPage.productTitle.getText()
+      await ProductsPage.cartIcon.click()
+
+      await expect(CartPage.productTitle).toBeDisplayed()
+      await expect(CartPage.checkoutBtn).toBeDisplayed()
+
+      const cartProductTitleText = await CartPage.productTitle.getText()
+      await expect(cartProductTitleText).toEqual(detailsProductTitleText)
+
+      await CartPage.checkoutBtn.click()
+      await expect(CheckoutPage.firstNameInput).toBeDisplayed()
+    })
+
+    it(`${username} should proceed to overview and finish purchase`, async () => {
+      await expect(CheckoutPage.firstNameInput).toBeDisplayed()
+      await expect(CheckoutPage.lastNameInput).toBeDisplayed()
+      await expect(CheckoutPage.postalCodeInput).toBeDisplayed()
+
+      await CheckoutPage.checkout('test', 'test', '8000')
+
+      await expect(CheckoutPage.totalPrice).toBeDisplayed()
+      await expect(CheckoutPage.finishBtn).toBeDisplayed()
+
+      await CheckoutPage.finishBtn.click()
+    })
+
+    it(`${username} should back home and logout`, async () => {
+      await expect(CheckoutPage.backHomeBtn).toBeDisplayed()
+
+      await CheckoutPage.backHomeBtn.click()
+      await expect(ProductsPage.productsList).toBeElementsArrayOfSize({ gte: 1 })
 
       await ProductsPage.logout()
-      await expect(LoginPage.usernameInput).toBeDisplayed()
     })
   })
 })

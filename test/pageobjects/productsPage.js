@@ -7,6 +7,10 @@ class ProductsPage {
     return $('#item_4_title_link > div')
   }
 
+  get cartIcon() {
+    return $('.shopping_cart_link')
+  }
+
   get hamburgerMenu() {
     return $('#menu_button_container > div > div:nth-child(1) > div')
   }
