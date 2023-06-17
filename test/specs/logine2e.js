@@ -1,7 +1,9 @@
 import LoginPage from '../pageobjects/loginPage'
 import ProductsPage from '../pageobjects/productsPage'
+import DetailsPage from '../pageobjects/detailsPage'
 
 const validPassword = 'secret_sauce'
+const canLoginUsernames = ['standard_user', 'problem_user', 'performance_glitch_user']
 
 describe('Login functionality', () => {
   beforeAll('Open Browser URL', () => {
@@ -35,29 +37,30 @@ describe('Login functionality', () => {
     await expect(LoginPage.errorMessage).toHaveTextContaining('Epic sadface: Sorry, this user has been locked out.')
   })
 
-  it('should login within a specified duration', async () => {
-    const startTime = new Date().getTime()
+  canLoginUsernames.forEach((username) => {
+    it(`should login with username ${username} within specified duration`, async () => {
+      const startTime = new Date().getTime()
+      await LoginPage.login(username, validPassword)
+      const endTime = new Date().getTime()
 
-    await LoginPage.login('performance_glitch_user', validPassword)
+      const duration = endTime - startTime
+      const maxDuration = 4000
 
-    const endTime = new Date().getTime()
-    const duration = endTime - startTime
+      await expect(ProductsPage.hamburgerMenu).toBeDisplayed()
+      await expect(ProductsPage.productsList).toBeElementsArrayOfSize({ gte: 1 })
+      expect(duration).toBeLessThan(maxDuration, `Login took longer than ${maxDuration} miliseconds`)
+    })
 
-    const maxDuration = 4000
+    it(`${username} should add one item and see the cart badge`, async () => {
+      await ProductsPage.firstProductTitle.click()
 
-    expect(duration).toBeLessThan(maxDuration, `Login took longer than ${maxDuration} miliseconds`)
-    await ProductsPage.logout()
-  })
+      await expect(DetailsPage.productTitle).toBeDisplayed()
+      await expect(DetailsPage.productTitle.getText()).toEqual(ProductsPage.firstProductTitle.getText())
+      await DetailsPage.addToCartBtn.click()
+      await expect(DetailsPage.cartBadge).toHaveTextContaining('1')
 
-  it('should login correctly and logout', async () => {
-    await LoginPage.login('standard_user', validPassword)
-    await expect(ProductsPage.productsTitle).toBeDisplayed()
-    await expect(ProductsPage.hamburgerMenu).toBeDisplayed()
-
-    await expect(ProductsPage.productsTitle).toHaveTextContaining('Products')
-    await ProductsPage.logout()
-    await expect(LoginPage.usernameInput).toBeDisplayed()
-    // luego chequear de hacer primero todos los casos negativos, y por ultimo este caso positivo.
-    // y que este caso positivo no se desloguee, sino que en otro describe aprovechemos que esta logueado para poder hacer una compra
+      await ProductsPage.logout()
+      await expect(LoginPage.usernameInput).toBeDisplayed()
+    })
   })
 })

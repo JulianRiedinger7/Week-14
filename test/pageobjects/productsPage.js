@@ -1,6 +1,10 @@
 class ProductsPage {
-  get productsTitle() {
-    return $('.title')
+  get productsList() {
+    return $$('.inventory_item')
+  }
+
+  get firstProductTitle() {
+    return $('#item_4_title_link > div')
   }
 
   get hamburgerMenu() {
