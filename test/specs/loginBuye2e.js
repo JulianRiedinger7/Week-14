@@ -5,7 +5,7 @@ import CartPage from '../pageobjects/cartPage'
 import CheckoutPage from '../pageobjects/checkoutPage'
 
 const validPassword = 'secret_sauce'
-const canLoginUsernames = ['standard_user', 'problem_user', 'performance_glitch_user']
+const canLoginUsernames = ['standard_user', 'performance_glitch_user', 'problem_user']
 
 describe('Login errors functionality', () => {
   beforeAll('Open Browser URL', () => {
@@ -66,6 +66,7 @@ describe('Specific usernames test', () => {
       const detailsProductTitleText = await DetailsPage.productTitle.getText()
       await expect(detailsProductTitleText).toEqual(productTitleText)
       await DetailsPage.addToCartBtn.click()
+      await expect(DetailsPage.cartBadge).toBeDisplayed()
       await expect(DetailsPage.cartBadge).toHaveTextContaining('1')
     })
 
