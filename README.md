@@ -12,6 +12,20 @@ The objective of the project is to check all the accepted users and see the beha
 
 ![Swag Labs Home](https://i.imgur.com/ZOlEk2t.png)
 
+## Conclusions
+
+### standard_user:
+
+This user has a perfect functionallity both logging into the website and purchasing an item. It should be used as reference.
+
+### performance_glitch_user:
+
+This user is taking a lot of time in the requests like logging in, going back home from checkout, etc. This might be a server problem, so it's important to check the Backend API infrastructure.
+
+### problem_user:
+
+This user has bugs mainly in the purchase flow. It has incorrect images for products and can't add an item from details page. This is why tests crashed when trying to finish the purchase.
+
 ## How to Run
 
 1. Clone this repo using this command:
