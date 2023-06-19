@@ -104,6 +104,8 @@ describe('Specific usernames test', () => {
       await expect(ProductsPage.productsList).toBeElementsArrayOfSize({ gte: 1 })
 
       await ProductsPage.logout()
+      await expect(LoginPage.usernameInput).toBeDisplayed()
+      await expect(LoginPage.passwordInput).toBeDisplayed()
     })
   })
 })
