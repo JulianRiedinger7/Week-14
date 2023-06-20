@@ -20,11 +20,11 @@ This user has a perfect functionallity both logging into the website and purchas
 
 ### performance_glitch_user:
 
-This user is taking a lot of time in the requests like logging in, going back home from checkout, etc. This might be a server problem, so it's important to check the Backend API infrastructure.
+This user is taking a lot of time in the requests like logging in, filtering items, going back home from checkout, etc. This might be a server problem, so it's important to check the Backend API infrastructure.
 
 ### problem_user:
 
-This user has bugs mainly in the purchase flow. It has incorrect images for products and can't add an item from details page. This is why tests crashed when trying to finish the purchase.
+This user has bugs mainly in the purchase flow. It has incorrect images for products and can't add an item from details page. This is why tests get stucked when trying to finish the purchase.
 
 ## How to Run
 
