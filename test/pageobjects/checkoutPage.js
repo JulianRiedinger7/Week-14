@@ -27,6 +27,10 @@ class CheckoutPage {
     return $('#back-to-products')
   }
 
+  get errorMessage() {
+    return $('div.error-message-container.error > h3')
+  }
+
   async checkout(firstName, lastName, postalCode) {
     await this.firstNameInput.setValue(firstName)
     await this.lastNameInput.setValue(lastName)

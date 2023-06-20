@@ -1,6 +1,6 @@
 class CartPage {
   get productTitle() {
-    return $('#item_4_title_link > div')
+    return $('div.cart_item >div .inventory_item_name')
   }
 
   get checkoutBtn() {

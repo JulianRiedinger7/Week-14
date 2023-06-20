@@ -4,7 +4,19 @@ class ProductsPage {
   }
 
   get firstProductTitle() {
-    return $('#item_4_title_link > div')
+    return $('div.inventory_list >div .inventory_item_name')
+  }
+
+  get firstProductPrice() {
+    return $('div.inventory_list >div .inventory_item_description > div.pricebar > div.inventory_item_price')
+  }
+
+  get productsFilter() {
+    return $('.product_sort_container')
+  }
+
+  get lowToHighOption() {
+    return $('.product_sort_container > [value="lohi"]')
   }
 
   get cartIcon() {
@@ -17,6 +29,11 @@ class ProductsPage {
 
   get logoutBtn() {
     return $('#logout_sidebar_link')
+  }
+
+  async lowToHighFiltering() {
+    await this.productsFilter.click()
+    await this.lowToHighOption.click()
   }
 
   async logout() {

@@ -24,6 +24,12 @@ describe('Login errors functionality', () => {
     await expect(LoginPage.errorMessage).toHaveTextContaining('Epic sadface: Username is required')
   })
 
+  it('should give an alert password required', async () => {
+    await LoginPage.login('a', '')
+    await expect(LoginPage.errorMessage).toBeDisplayed()
+    await expect(LoginPage.errorMessage).toHaveTextContaining('Epic sadface: Password is required')
+  })
+
   it('should give an alert username incorrect', async () => {
     await LoginPage.login('juliantest', validPassword)
 
@@ -58,6 +64,18 @@ describe('Specific usernames test', () => {
       expect(duration).toBeLessThan(maxDuration, `Login took longer than ${maxDuration} miliseconds`)
     })
 
+    it(`${username} should should filter and see different items`, async () => {
+      await expect(ProductsPage.productsFilter).toBeDisplayed()
+
+      let productPriceBeforeFiltering = await ProductsPage.firstProductPrice.getText()
+      productPriceBeforeFiltering = parseFloat(productPriceBeforeFiltering.replace('$', ''))
+      await ProductsPage.lowToHighFiltering()
+      let productPriceAfterFiltering = await ProductsPage.firstProductPrice.getText()
+      productPriceAfterFiltering = parseFloat(productPriceAfterFiltering.replace('$', ''))
+
+      expect(productPriceAfterFiltering).toBeLessThan(productPriceBeforeFiltering)
+    })
+
     it(`${username} should add one item and see the cart badge`, async () => {
       const productTitleText = await ProductsPage.firstProductTitle.getText()
       await ProductsPage.firstProductTitle.click()
@@ -82,6 +100,23 @@ describe('Specific usernames test', () => {
 
       await CartPage.checkoutBtn.click()
       await expect(CheckoutPage.firstNameInput).toBeDisplayed()
+    })
+
+    it(`${username} should see checkout messages inputs required`, async () => {
+      await expect(CheckoutPage.firstNameInput).toBeDisplayed()
+      await expect(CheckoutPage.lastNameInput).toBeDisplayed()
+      await expect(CheckoutPage.postalCodeInput).toBeDisplayed()
+
+      await CheckoutPage.checkout('', '', '')
+      await expect(CheckoutPage.errorMessage).toHaveTextContaining('Error: First Name is required')
+
+      console.log(await CheckoutPage.errorMessage.getText())
+
+      await CheckoutPage.checkout('test', '', '')
+      await expect(CheckoutPage.errorMessage).toHaveTextContaining('Error: Last Name is required')
+
+      await CheckoutPage.checkout('test', 'test', '')
+      await expect(CheckoutPage.errorMessage).toHaveTextContaining('Error: Postal Code is required')
     })
 
     it(`${username} should proceed to overview and finish purchase`, async () => {
